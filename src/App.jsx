@@ -1,20 +1,21 @@
 import { useState, useEffect } from 'react';
-import {Routes , Route} from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import ProductForm from './pages/ProductForm.jsx';
 import ProductDetail from './pages/ProductDetail.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import './styles.css';
 
 const API_URL = 'https://dummyjson.com/products?limit=30';
 
-function App(){
+function App() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    async function fetchProducts(){
+    async function fetchProducts() {
       try {
         const response = await fetch(API_URL);
 
@@ -24,11 +25,9 @@ function App(){
 
         const data = await response.json();
         setProducts(data.products);
-      }
-      catch (error) {
+      } catch (error) {
         setError('Failed to fetch products. Please try again later.');
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     }
@@ -38,11 +37,38 @@ function App(){
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={ <ProtectedRoute><Home products={products} loading={loading} error={error} /></ProtectedRoute>} />
-      <Route path="/products/new" element={<ProtectedRoute><ProductForm /></ProtectedRoute>}/>
-      <Route path="/products/:id" element={<ProtectedRoute><ProductDetail /></ProtectedRoute>}/>
-      <Route path="/products/:id/edit" element={<ProtectedRoute><ProductForm /></ProtectedRoute>}/>
-
+      <Route
+        path="/"
+        element={
+          <ProtectedRoute>
+            <Home products={products} loading={loading} error={error} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products/new"
+        element={
+          <ProtectedRoute>
+            <ProductForm />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products/:id"
+        element={
+          <ProtectedRoute>
+            <ProductDetail products={products} loading={loading} />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/products/:id/edit"
+        element={
+          <ProtectedRoute>
+            <ProductForm />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 }
